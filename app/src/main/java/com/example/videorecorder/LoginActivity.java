@@ -61,6 +61,8 @@ public class LoginActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         progressDialog=new ProgressDialog(LoginActivity.this);
         progressDialog.setTitle("Loading...");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCancelable(false);
 
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -159,7 +161,7 @@ public class LoginActivity extends AppCompatActivity {
                                     addUserDetailsToDatabase(user);
                                 }
                                 else{
-                                    progressDialog.cancel();
+                                    progressDialog.dismiss();
                                     startActivity(new Intent(LoginActivity.this,MainActivity.class));
                                 }
                             }
@@ -168,7 +170,7 @@ public class LoginActivity extends AppCompatActivity {
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                progressDialog.cancel();
+                progressDialog.dismiss();
                 Toast.makeText(getApplicationContext(), "Error getting data!!!", Toast.LENGTH_LONG).show();
             }
         });
@@ -185,7 +187,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                        progressDialog.cancel();
+                        progressDialog.dismiss();
                         Intent intent = new Intent(getApplication(), MainActivity.class);
                         startActivity(intent);
                         finish();

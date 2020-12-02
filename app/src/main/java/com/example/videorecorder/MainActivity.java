@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
 
         progressDialog= new ProgressDialog(MainActivity.this);
         progressDialog.setTitle("Uploading...");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCancelable(false);
 
         ActivityCompat.requestPermissions(MainActivity.this,
                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE},
@@ -157,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 } else {
-                    progressDialog.cancel();
+                    progressDialog.dismiss();
                     Toast.makeText(MainActivity.this,"Upload Failed!",Toast.LENGTH_SHORT).show();
                 }
             }
@@ -175,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
-                        progressDialog.cancel();
+                        progressDialog.dismiss();
                         delteFile();
                         Log.d("URL_Upload", "DocumentSnapshot added with ID: " + documentReference.getId());
 
@@ -184,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        progressDialog.cancel();
+                        progressDialog.dismiss();
                         Log.w("URL_Upload", "Error adding document", e);
                     }
                 });

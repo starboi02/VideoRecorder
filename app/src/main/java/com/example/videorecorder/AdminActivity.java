@@ -59,6 +59,8 @@ public class AdminActivity extends AppCompatActivity {
         defaultText=findViewById(R.id.default_text);
         progressDialog = new ProgressDialog(AdminActivity.this);
         progressDialog.setTitle("Loading....");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCancelable(false);
 
         db = FirebaseFirestore.getInstance();
 
@@ -110,14 +112,14 @@ public class AdminActivity extends AppCompatActivity {
                     public void onSuccess(QuerySnapshot documentSnapshots) {
                         if (documentSnapshots.isEmpty()) {
                             defaultText.setVisibility(View.VISIBLE);
-                            progressDialog.cancel();
+                            progressDialog.dismiss();
                             return;
                         } else {
                             List<MessageItem> types = documentSnapshots.toObjects(MessageItem.class);
                             arrayList.addAll(types);
                             adapter = new MessageAdapter(arrayList);
                             recyclerView.setAdapter(adapter);
-                            progressDialog.cancel();
+                            progressDialog.dismiss();
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -168,7 +170,7 @@ public class AdminActivity extends AppCompatActivity {
             adapter.notifyItemInserted(arrayList.size() - 1);
         }
         defaultText.setVisibility(View.INVISIBLE);
-        progressDialog.cancel();
+        progressDialog.dismiss();
     }
 
 
