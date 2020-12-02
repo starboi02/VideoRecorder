@@ -2,6 +2,7 @@ package com.example.videorecorder;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -28,9 +29,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
@@ -90,6 +96,16 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
+                if(account.getEmail().equals("iit2019091@iiita.ac.in")){
+                    SharedPreferences.Editor editor = getSharedPreferences("user",MODE_PRIVATE).edit();
+                    editor.putBoolean("admin",true);
+                    editor.apply();
+                }
+                else{
+                    SharedPreferences.Editor editor = getSharedPreferences("user",MODE_PRIVATE).edit();
+                    editor.putBoolean("admin",false);
+                    editor.apply();
+                }
             } catch (ApiException e) {
                 Toast.makeText(LoginActivity.this, "Sign In Cancelled", Toast.LENGTH_SHORT).show();
             }
@@ -108,11 +124,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            addUserDetailsToDatabase(user);
-                            progressDialog.cancel();
-                            Intent intent = new Intent(getApplication(), MainActivity.class);
-                            startActivity(intent);
-                            finish();
+                            checkDuplicateUser(user);
                         }
                         else {
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -123,6 +135,43 @@ public class LoginActivity extends AppCompatActivity {
 
                     }
                 });
+    }
+
+    public void checkDuplicateUser(FirebaseUser user){
+        db.collection("users")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful() ){
+                            if(task.getResult().isEmpty()){
+                                addUserDetailsToDatabase(user);
+                            }
+                            else{
+                                boolean isDuplicate=false;
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    if(user.getUid().equals(document.getString("id"))){
+                                        isDuplicate=true;
+                                        break;
+                                    }
+                                }
+                                if(!isDuplicate){
+                                    addUserDetailsToDatabase(user);
+                                }
+                                else{
+                                    progressDialog.cancel();
+                                    startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                                }
+                            }
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressDialog.cancel();
+                Toast.makeText(getApplicationContext(), "Error getting data!!!", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public void addUserDetailsToDatabase(FirebaseUser firebaseUser){
@@ -136,6 +185,10 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                        progressDialog.cancel();
+                        Intent intent = new Intent(getApplication(), MainActivity.class);
+                        startActivity(intent);
+                        finish();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -151,4 +204,13 @@ public class LoginActivity extends AppCompatActivity {
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    @Override
+    public void onBackPressed() {
+        if(mAuth.getCurrentUser()==null){
+            Intent homeScreenIntent = new Intent(Intent.ACTION_MAIN);
+            homeScreenIntent.addCategory(Intent.CATEGORY_HOME);
+            homeScreenIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(homeScreenIntent);
+        }
+    }
 }
