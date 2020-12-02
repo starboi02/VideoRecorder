@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "60686680706",
+    "firebase_url": "https://video-recorder-61c21.firebaseio.com",
+    "project_id": "video-recorder-61c21",
+    "storage_bucket": "video-recorder-61c21.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:60686680706:android:81fe58a8ff13e99d5c2a9b",
+        "android_client_info": {
+          "package_name": "com.example.videorecorder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "60686680706-ni7agde9v3phjeq8ahdrds1t00u51n9i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.videorecorder",
+            "certificate_hash": "efef0fffa7809d9a8e128ec82fab12afc3c5c308"
+          }
+        },
+        {
+          "client_id": "60686680706-80h80o1o2mncrnhrr6pqut6hg9kg9lsh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBACix4NySfV8QdHSQXK8Yo26BW1UhsPlI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "60686680706-80h80o1o2mncrnhrr6pqut6hg9kg9lsh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
